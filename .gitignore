@@ -1,0 +1,20 @@
+# segredos e scripts locais de publicação
+*.env
+.env*
+cloudflare.env
+publicar.sh
+publicar.ps1
+
+# gerações brutas, cópias de revisão e capturas de teste
+review/
+.playwright-mcp/
+
+# ferramenta usada para construir o site (não faz parte do projeto)
+site-de-10k/
+
+# pastas locais
+node_modules/
+.claude/
+Thumbs.db
+desktop.ini
+.DS_Store
