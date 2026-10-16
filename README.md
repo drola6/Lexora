@@ -2,15 +2,15 @@
 
 Site da Lexora, no formato de um editor de código, com abertura animada pelo scroll.
 
-- `site/`: o site pronto para publicar (`index.html` + `assets/`). HTML, CSS e JavaScript puros, sem build.
+- `index.html` + `assets/`: o site, na raiz do repositório (é o que a Vercel publica). HTML, CSS e JavaScript puros, sem build.
 - `pacote-de-design.md`: as decisões de design e todos os textos do site.
 
 ## Ver no computador
 
-Abra um servidor local dentro de `site/` e acesse o endereço que ele mostrar:
+Abra um servidor local na raiz do repositório e acesse o endereço que ele mostrar:
 
 ```
-npx http-server site
+npx http-server .
 ```
 
 Abrir o `index.html` com dois cliques também funciona, mas algumas animações dependem do servidor local.
