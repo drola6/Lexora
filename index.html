@@ -518,6 +518,10 @@ html.qz-lock{overflow:hidden}
 .qz.is-done .qz-foot{display:none}
 .qz-done{display:flex;flex-direction:column;align-items:flex-start}
 .qz-done .qz-ic{width:58px;height:58px;border-radius:50%;margin-bottom:26px}
+.qz-acts,.sent-acts{display:flex;flex-wrap:wrap;align-items:center;gap:12px 22px;margin-top:26px}
+.qz-copy,.qz-close,.sent-copy{min-height:44px;padding:0 4px;font-size:15px;color:var(--text-secondary);text-decoration:underline;text-decoration-color:rgba(147,163,174,.4);text-underline-offset:5px;transition:color .4s var(--ease)}
+.qz-copy:hover,.qz-close:hover,.sent-copy:hover{color:var(--text-primary)}
+.sent .sent-help{margin-top:16px;max-width:46ch;font-family:var(--body);font-size:17px;line-height:1.6;color:var(--text-secondary)}
 .qz-sum{display:grid;grid-template-columns:minmax(0,190px) 1fr;gap:12px 24px;width:100%;margin:30px 0 34px;padding-top:24px;border-top:1px solid var(--line);font-size:15.5px}
 .qz-sum dt{padding-top:3px;font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim)}
 .qz-sum dd{min-width:0;overflow-wrap:anywhere}
@@ -879,7 +883,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
       <p class="kicker rv"><span class="dot" aria-hidden="true"></span>Contato</p>
       <h2 class="t rv">Conte onde o seu negócio perde tempo.</h2>
       <p class="lede rv">A gente responde em até 24 horas com uma ideia do que dá para fazer.</p>
-      <!-- FORMULÁRIO DE EXEMPLO: mostra o agradecimento, mas a mensagem ainda não é enviada para lugar nenhum. Ligar ao WhatsApp, e-mail ou serviço de formulário antes de receber visitas reais. -->
+      <!-- FORMULÁRIO: a mensagem é copiada e a pessoa cola na conversa do Instagram da Lexora (IG_DM no script). -->
       <form class="form rv" novalidate>
         <div class="field"><label for="f-nome">Nome</label><input id="f-nome" name="nome" autocomplete="name" placeholder="Seu nome" required></div>
         <div class="field"><label for="f-whats">WhatsApp</label><input id="f-whats" name="whatsapp" type="tel" inputmode="tel" autocomplete="tel" placeholder="(00) 00000-0000" required></div>
@@ -894,12 +898,15 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
         <p class="err" aria-live="polite"></p>
         <div class="actions"><button class="btn" type="submit">Enviar <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button></div>
       </form>
-      <div class="sent" role="status" tabindex="-1"><p>Recebemos. A gente responde em até 24 horas.</p></div>
+      <div class="sent" role="status" tabindex="-1">
+        <p>Agora é só enviar.</p>
+        <p class="sent-help">Sua mensagem já está copiada. Abra o Instagram da Lexora, cole na conversa e envie. A gente responde em até 24 horas.</p>
+        <div class="sent-acts"><a class="btn" href="https://ig.me/m/lexora.commerce" target="_blank" rel="noopener">Enviar no Instagram <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><button type="button" class="sent-copy">Copiar mensagem</button></div>
+      </div>
     </div>
   </section>
 </main>
 
-<!-- CONTATOS DE EXEMPLO: trocar pelo Instagram e e-mail reais da Lexora -->
 <footer class="obs">
   <div class="wrap">
     <div class="f-top">
@@ -908,15 +915,14 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
         <div><span class="wm">LEXORA</span><small>Sites e automações</small></div>
       </div>
       <div class="f-links">
-        <a href="https://instagram.com/lexora" target="_blank" rel="noopener">Instagram</a>
-        <a href="mailto:contato@lexora.com.br">contato@lexora.com.br</a>
+        <a href="https://www.instagram.com/lexora.commerce/" target="_blank" rel="noopener">Instagram @lexora.commerce</a>
       </div>
     </div>
     <p class="f-bot">© 2026 Lexora</p>
   </div>
 </footer>
 
-<!-- QUESTIONÁRIO DE EXEMPLO: abre nos botões "Quero conversar". Enquanto LEXORA_WHATS estiver vazio no script, as respostas só aparecem na tela. -->
+<!-- QUESTIONÁRIO: abre nos botões "Quero conversar". No fim, as respostas são copiadas e a pessoa cola na conversa do Instagram da Lexora (IG_DM no script). -->
 <dialog class="quiz" id="quiz" aria-label="Conte o que você precisa">
   <form class="qz" novalidate>
     <div class="qz-top">
@@ -1351,25 +1357,63 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
     b.setAttribute('aria-expanded', String(open));
   }));
 
-  // ===== formulário (exemplo: ainda não envia para lugar nenhum) =====
-  const form = $('.form'), err = $('.err'), sent = $('.sent');
+  // ===== envio pelo Instagram: a Lexora atende por lá =====
+  // O Instagram não aceita mensagem pronta no link, então o texto vai para a área de transferência
+  // e a pessoa cola na conversa que o botão abre.
+  const IG_DM = 'https://ig.me/m/lexora.commerce';
+  async function copyText(text) {
+    try { await navigator.clipboard.writeText(text); return true; } catch (e) { /* segue para o plano B */ }
+    try {
+      const t = document.createElement('textarea');
+      t.value = text;
+      t.setAttribute('readonly', '');
+      t.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
+      (document.querySelector('dialog[open]') || document.body).appendChild(t);
+      t.select();
+      const ok = document.execCommand('copy');
+      t.remove();
+      return ok;
+    } catch (e) { return false; }
+  }
+  function flash(b, ok) {
+    if (!b.dataset.t) b.dataset.t = b.textContent;
+    b.textContent = ok ? 'Copiado' : 'Não deu para copiar';
+    setTimeout(() => { b.textContent = b.dataset.t; }, 2200);
+  }
+
+  // ===== formulário de contato =====
+  const form = $('.form'), err = $('.err'), sent = $('.sent'), sentHelp = $('.sent-help');
+  const NEED = { site: 'Site', automacao: 'Automação', 'os-dois': 'Site e automação' };
+  let formText = '';
+  const sentMsg = ok => {
+    sentHelp.textContent = ok
+      ? 'Sua mensagem já está copiada. Abra o Instagram da Lexora, cole na conversa e envie. A gente responde em até 24 horas.'
+      : 'Toque em Copiar mensagem, abra o Instagram da Lexora, cole na conversa e envie. A gente responde em até 24 horas.';
+  };
   form.addEventListener('submit', e => {
     e.preventDefault();
     const nome = form.nome.value.trim(), wz = form.whatsapp.value.replace(/\D/g, ''), neg = form.negocio.value.trim();
     if (!nome) { err.textContent = 'Falta o seu nome.'; form.nome.focus(); return; }
     if (wz.length < 10) { err.textContent = 'Confira o WhatsApp, com DDD.'; form.whatsapp.focus(); return; }
     if (!neg) { err.textContent = 'Conte um pouco do seu negócio.'; form.negocio.focus(); return; }
+    const need = form.precisa.value;
+    formText = 'Olá, Lexora! Vim pelo site.\n\nNome: ' + nome + '\nWhatsApp: ' + form.whatsapp.value.trim() + (need ? '\nPrecisa de: ' + NEED[need] : '') + '\nNegócio: ' + neg;
+    copyText(formText).then(sentMsg);
     err.textContent = '';
     form.hidden = true;
     sent.classList.add('on');
     sent.focus({ preventScroll: true });
   });
+  $('.sent-copy').addEventListener('click', e => {
+    const b = e.currentTarget;
+    copyText(formText).then(ok => { sentMsg(ok); flash(b, ok); });
+  });
 
   // ===== questionário do "Quero conversar" =====
   {
-    // QUESTIONÁRIO DE EXEMPLO: enquanto LEXORA_WHATS estiver vazio, as respostas só aparecem na tela.
-    // Para receber no WhatsApp, coloque o número só com dígitos, com 55 e DDD (ex.: 5561999998888).
-    const LEXORA_WHATS = '';
+    // No fim, as respostas são copiadas e o botão abre a conversa no Instagram da Lexora (IG_DM, acima).
+    const DONE_OK = 'Suas respostas já estão copiadas. Toque em Enviar no Instagram, cole na conversa e envie. A gente responde em até 24 horas.';
+    const DONE_NO = 'Toque em Copiar respostas, depois em Enviar no Instagram, cole na conversa e envie. A gente responde em até 24 horas.';
 
     const sv = p => `<svg viewBox="0 0 28 28" aria-hidden="true">${p}</svg>`;
     const IC = {
@@ -1480,7 +1524,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
     const dlg = $('#quiz'), qzForm = $('.qz', dlg), qzBody = $('.qz-body', dlg), qzCount = $('.qz-count', dlg),
       qzBar = $('.qz-bar', dlg), qzBack = $('.qz-back', dlg), qzNext = $('.qz-next', dlg), qzErr = $('.qz-err', dlg);
     let ans = {}, contact = { nome: '', whats: '', negocio: '', extra: '' };
-    let path = PATHS.site, idx = 0, done = false, opener = null, advT = 0, lastPtr = 0, fontsIn = false, downOnBackdrop = false;
+    let path = PATHS.site, idx = 0, done = false, opener = null, advT = 0, lastPtr = 0, fontsIn = false, downOnBackdrop = false, doneText = '';
 
     function optHTML(q, o, i) {
       const on = q.multi ? (ans[q.id] || []).includes(o.v) : ans[q.id] === o.v;
@@ -1502,7 +1546,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
     }
     function contactHTML() {
       const nsei = ans.tipo === 'nsei';
-      return `<fieldset class="qz-step" aria-labelledby="qz-q">${headHTML('Para onde a gente manda a resposta?', 'A gente responde em até 24 horas, pelo WhatsApp.')}
+      return `<fieldset class="qz-step" aria-labelledby="qz-q">${headHTML('Como a gente fala com você?', 'Falta pouco. A gente responde em até 24 horas.')}
         <div class="qz-fields">
           <div class="field"><label for="qz-nome">Nome</label><input id="qz-nome" autocomplete="name" placeholder="Seu nome"></div>
           <div class="field"><label for="qz-whats">WhatsApp</label><input id="qz-whats" type="tel" inputmode="tel" autocomplete="tel" placeholder="(00) 00000-0000"></div>
@@ -1522,7 +1566,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
     function syncNext() {
       const id = path[idx];
       let label = 'Continuar';
-      if (id === 'contato') label = 'Enviar respostas';
+      if (id === 'contato') label = 'Finalizar';
       else if (Q[id].multi && !(ans[id] || []).length) label = 'Pular';
       qzNext.innerHTML = label + ' ' + ARROW;
     }
@@ -1565,11 +1609,14 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
       if (contact.extra) out.push(['Mais detalhes', contact.extra]);
       return out;
     }
-    function showDone(list) {
+    function showDone(list, text) {
       done = true;
+      doneText = text;
       qzForm.classList.add('is-done');
       qzBody.className = 'qz-body go-up';
-      qzBody.innerHTML = `<div class="qz-done"><span class="qz-ic" aria-hidden="true">${IC.mark}</span><h2 class="qz-q" id="qz-q" tabindex="-1">Recebemos suas respostas.</h2><p class="qz-help">A gente responde em até 24 horas no seu WhatsApp, com uma primeira ideia do projeto.</p><dl class="qz-sum"></dl><button type="button" class="btn qz-close">Fechar</button></div>`;
+      qzBody.innerHTML = `<div class="qz-done"><span class="qz-ic" aria-hidden="true">${IC.mark}</span><h2 class="qz-q" id="qz-q" tabindex="-1">Agora é só enviar.</h2><p class="qz-help" id="qz-done-help">${DONE_OK}</p><div class="qz-acts"><a class="btn" href="${IG_DM}" target="_blank" rel="noopener">Enviar no Instagram ${ARROW}</a><button type="button" class="qz-copy">Copiar respostas</button></div><dl class="qz-sum"></dl><button type="button" class="qz-close">Fechar</button></div>`;
+      // copia já no clique de Finalizar, enquanto o navegador ainda permite
+      copyText(text).then(ok => { const h = $('#qz-done-help', qzBody); if (h) h.textContent = ok ? DONE_OK : DONE_NO; });
       const dl = $('.qz-sum', qzBody);
       list.forEach(([k, v]) => {
         const dt = document.createElement('dt'), dd = document.createElement('dd');
@@ -1586,11 +1633,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
       if (wz.length < 10) { qzErr.textContent = 'Confira o WhatsApp, com DDD.'; field('qz-whats').focus(); return; }
       if (ans.tipo === 'nsei' && !contact.extra) { qzErr.textContent = 'Conte um pouco do que você precisa.'; field('qz-extra').focus(); return; }
       const list = rows();
-      if (LEXORA_WHATS) {
-        const text = 'Olá, Lexora! Respondi o questionário do site.\n\n' + list.map(([k, v]) => k + ': ' + v).join('\n');
-        window.open('https://wa.me/' + LEXORA_WHATS + '?text=' + encodeURIComponent(text), '_blank', 'noopener');
-      }
-      showDone(list);
+      showDone(list, 'Olá, Lexora! Respondi o questionário do site.\n\n' + list.map(([k, v]) => k + ': ' + v).join('\n'));
     }
     function goNext() {
       clearTimeout(advT);
@@ -1649,6 +1692,11 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
     qzBody.addEventListener('click', e => {
       const t = e.target;
       if (t.closest('.qz-close')) { closeQuiz(); return; }
+      const cp = t.closest('.qz-copy');
+      if (cp) {
+        copyText(doneText).then(ok => { flash(cp, ok); const h = $('#qz-done-help', qzBody); if (h) h.textContent = ok ? DONE_OK : DONE_NO; });
+        return;
+      }
       // toque ou clique numa opção única já avança; no teclado a pessoa confirma com Enter
       if (t.type !== 'radio' || performance.now() - lastPtr > 900) return;
       record(t);
