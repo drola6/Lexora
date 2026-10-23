@@ -17,4 +17,4 @@ Abrir o `index.html` com dois cliques também funciona, mas mostra só a abertur
 
 ## Antes de publicar
 
-Os projetos e o Instagram e o e-mail do rodapé ainda são exemplos. O formulário de contato mostra a mensagem de recebido, mas ainda não envia para lugar nenhum. A seção de depoimentos volta quando houver frases reais de clientes.
+Os projetos e o Instagram e o e-mail do rodapé ainda são exemplos. O formulário de contato mostra a mensagem de recebido, mas ainda não envia para lugar nenhum. O questionário que abre nos botões "Quero conversar" também só mostra o resumo na tela: para as respostas chegarem no WhatsApp, coloque o número da Lexora em `LEXORA_WHATS`, no script do `index.html`. A seção de depoimentos volta quando houver frases reais de clientes.

@@ -436,6 +436,106 @@ h2.t{font-family:var(--display);font-weight:300;font-size:clamp(32px,4.2vw,58px)
 .sent.on{display:block;animation:msgin 1.2s var(--ease) both}
 .sent p{font-family:var(--display);font-weight:300;font-size:clamp(24px,2.8vw,36px);line-height:1.3;text-wrap:balance}
 
+/* ===== questionário (abre no "Quero conversar") ===== */
+html{scrollbar-gutter:stable}
+html.qz-lock{overflow:hidden}
+.quiz{position:fixed;inset:0;margin:auto;width:min(780px,calc(100% - 32px));height:min(740px,calc(100% - 48px));max-width:none;max-height:none;padding:0;border:1px solid var(--line-strong);border-radius:22px;background:linear-gradient(180deg,#121C24 0%,#0D151B 100%);color:var(--text-primary);box-shadow:0 40px 120px rgba(0,0,0,.55),inset 0 1px 0 rgba(211,234,244,.06);overflow:hidden}
+.quiz::backdrop{background:rgba(5,8,11,.74);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.quiz[open]{animation:qzin .7s var(--ease) both}
+.quiz[open]::backdrop{animation:qzfade .5s var(--ease) both}
+.quiz.closing{animation:qzout .2s var(--ease-soft) both}
+@keyframes qzin{from{opacity:0;transform:translateY(18px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes qzout{to{opacity:0;transform:translateY(10px) scale(.99)}}
+@keyframes qzfade{from{opacity:0}}
+.qz{display:grid;grid-template-rows:auto minmax(0,1fr) auto;height:100%}
+.qz-top{display:flex;align-items:center;gap:18px;padding:18px 18px 0 30px}
+.qz-count{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--text-dim);min-width:7ch}
+.qz-bar{position:relative;flex:1;height:2px;border-radius:2px;background:var(--line-strong)}
+.qz-bar i{position:absolute;inset:0;border-radius:inherit;transform-origin:0 50%;transform:scaleX(var(--qp,0));background:linear-gradient(90deg,rgba(211,234,244,.35),var(--accent));transition:transform .8s var(--ease)}
+.qz-bar b{position:absolute;top:50%;left:calc(var(--qp,0)*100%);width:7px;height:7px;margin:-3.5px 0 0 -3.5px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(211,234,244,.12),0 0 14px rgba(211,234,244,.7);transition:left .8s var(--ease)}
+.qz-x{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;color:var(--text-secondary);border:1px solid transparent;transition:color .4s var(--ease),border-color .4s var(--ease)}
+.qz-x:hover{color:var(--text-primary);border-color:var(--line-strong)}
+.qz-x svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round}
+.qz-body{overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;padding:34px 30px 30px}
+.qz-body.go-fwd>*{animation:qzstep .55s var(--ease) both}
+.qz-body.go-back>*{animation:qzstepb .55s var(--ease) both}
+.qz-body.go-up>*{animation:qzrise .7s var(--ease) both}
+@keyframes qzstep{from{opacity:0;transform:translateX(24px)}}
+@keyframes qzstepb{from{opacity:0;transform:translateX(-24px)}}
+.qz-step{border:0;min-width:0}
+.qz-q{font-family:var(--display);font-weight:300;font-size:clamp(25px,3.1vw,36px);line-height:1.15;letter-spacing:-.02em;max-width:24ch;text-wrap:balance;outline:none}
+.qz-help{margin-top:12px;max-width:52ch;font-size:16px;color:var(--text-secondary)}
+.qz-opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:28px}
+.qz-opts.c3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.qz-card,.qz-pill{position:relative;display:block;cursor:pointer}
+.qz-card input,.qz-pill input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.qz-body.go-fwd .qz-card,.qz-body.go-fwd .qz-pill{animation:qzrise .6s var(--ease) both;animation-delay:calc(var(--i,0)*45ms + 90ms)}
+@keyframes qzrise{from{opacity:0;transform:translateY(10px)}}
+.qz-card .in{position:relative;display:flex;flex-direction:column;gap:12px;height:100%;padding:18px 20px;border:1px solid var(--line-strong);border-radius:14px;background:rgba(211,234,244,.02);transition:border-color .5s var(--ease),background .5s var(--ease)}
+.qz-card:hover .in{border-color:rgba(211,234,244,.42);background:rgba(211,234,244,.045)}
+.qz-card input:checked+.in{border-color:var(--accent);background:rgba(211,234,244,.085)}
+.qz-card input:focus-visible+.in,.qz-pill input:focus-visible+span{outline:2px solid var(--accent);outline-offset:3px}
+.qz-card .in::after{content:"";position:absolute;top:17px;right:17px;width:16px;height:16px;border-radius:50%;border:1px solid var(--line-strong);transition:border-color .4s var(--ease),background .4s var(--ease)}
+.qz-card input:checked+.in::after{border-color:var(--accent);background:radial-gradient(circle,var(--accent) 0 3.5px,transparent 4.5px)}
+.qz-card input:checked+.in::before{content:"";position:absolute;top:17px;right:17px;width:16px;height:16px;border-radius:50%;border:1px solid var(--accent);pointer-events:none;animation:qzring 1.1s var(--ease) both}
+@keyframes qzring{from{opacity:.85;transform:scale(1)}to{opacity:0;transform:scale(2.9)}}
+.qz-card .tx{display:flex;flex-direction:column;gap:4px;padding-right:26px}
+.qz-card b{font-family:var(--display);font-weight:400;font-size:17px;line-height:1.3}
+.qz-card small{font-size:14.5px;line-height:1.45;color:var(--text-secondary)}
+.qz-ic{display:grid;place-items:center;flex:none;width:46px;height:46px;border-radius:12px;border:1px solid var(--line-strong);color:var(--accent);background:rgba(211,234,244,.03);perspective:160px;transition:border-color .5s var(--ease)}
+.qz-card input:checked+.in .qz-ic{border-color:rgba(211,234,244,.55)}
+.qz-ic svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+.qz-ic svg .f{fill:currentColor;stroke:none}
+.cube{position:relative;width:20px;height:20px;transform-style:preserve-3d;transform:rotateX(-24deg) rotateY(38deg);animation:qzspin 10s linear infinite}
+.cube i{position:absolute;inset:0;border:1px solid rgba(211,234,244,.8);background:rgba(211,234,244,.07)}
+.cube i:nth-child(1){transform:translateZ(10px)}
+.cube i:nth-child(2){transform:rotateY(180deg) translateZ(10px)}
+.cube i:nth-child(3){transform:rotateY(90deg) translateZ(10px)}
+.cube i:nth-child(4){transform:rotateY(-90deg) translateZ(10px)}
+.cube i:nth-child(5){transform:rotateX(90deg) translateZ(10px)}
+.cube i:nth-child(6){transform:rotateX(-90deg) translateZ(10px)}
+@keyframes qzspin{from{transform:rotateX(-24deg) rotateY(0deg)}to{transform:rotateX(-24deg) rotateY(360deg)}}
+.qz-opts:not(.c3) .qz-card.has-ic .in{flex-direction:row;align-items:center;gap:16px}
+.qz-sw{display:flex;height:46px;margin-right:28px;border-radius:9px;overflow:hidden;border:1px solid rgba(211,234,244,.1)}
+.qz-sw i{flex:1}
+.qz-aa{display:flex;align-items:center;height:46px;font-size:44px;line-height:1;color:var(--text-primary)}
+.qz-pills{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+.qz-pill span{display:inline-flex;align-items:center;gap:11px;min-height:46px;padding:10px 18px 10px 14px;border:1px solid var(--line-strong);border-radius:999px;font-size:15.5px;transition:border-color .5s var(--ease),background .5s var(--ease)}
+.qz-pill span::before{content:"";flex:none;width:16px;height:16px;border-radius:5px;border:1px solid var(--line-strong);transition:background-color .4s var(--ease),border-color .4s var(--ease)}
+.qz-pill:hover span{border-color:rgba(211,234,244,.42)}
+.qz-pill input:checked+span{border-color:var(--accent);background:rgba(211,234,244,.1)}
+.qz-pill input:checked+span::before{border-color:var(--accent);background:var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 6.2l2.3 2.3 4.7-5' fill='none' stroke='%230B1015' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") 50%/11px no-repeat}
+.qz-fields{margin-top:18px}
+.qz-fields .field{grid-template-columns:150px 1fr;padding:16px 0}
+.qz-foot{display:flex;flex-wrap:wrap;align-items:center;gap:0 16px;padding:14px 18px 16px 22px;border-top:1px solid var(--line);background:rgba(11,16,21,.35)}
+.qz-err{order:-1;flex-basis:100%;font-size:14.5px;color:#E6C9C0}
+.qz-err:not(:empty){padding:2px 0 10px 8px}
+.qz-back{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 10px;border-radius:999px;font-size:15px;color:var(--text-secondary);transition:color .4s var(--ease)}
+.qz-back:hover{color:var(--text-primary)}
+.qz-back svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.qz-back.off{visibility:hidden}
+.qz-next{margin-left:auto}
+.qz.is-done .qz-foot{display:none}
+.qz-done{display:flex;flex-direction:column;align-items:flex-start}
+.qz-done .qz-ic{width:58px;height:58px;border-radius:50%;margin-bottom:26px}
+.qz-sum{display:grid;grid-template-columns:minmax(0,190px) 1fr;gap:12px 24px;width:100%;margin:30px 0 34px;padding-top:24px;border-top:1px solid var(--line);font-size:15.5px}
+.qz-sum dt{padding-top:3px;font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim)}
+.qz-sum dd{min-width:0;overflow-wrap:anywhere}
+@media (max-width:640px){
+  .quiz{width:100%;height:100%;border:0;border-radius:0}
+  .qz-top{gap:14px;padding:max(10px,env(safe-area-inset-top)) 8px 0 20px}
+  .qz-body{padding:24px 20px 24px}
+  .qz-opts{grid-template-columns:1fr;gap:10px;margin-top:24px}
+  .qz-opts.c3{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .qz-card .in{padding:15px 16px;gap:10px}
+  .qz-opts:not(.c3) .qz-card.has-ic .in{gap:14px}
+  .qz-pills{gap:8px;margin-top:24px}
+  .qz-fields .field{grid-template-columns:1fr;gap:8px}
+  .qz-foot{padding:10px 12px calc(10px + env(safe-area-inset-bottom)) 10px}
+  .qz-sum{grid-template-columns:1fr;gap:2px}
+  .qz-sum dd{margin-bottom:12px}
+}
+
 /* ===== rodapé ===== */
 footer{position:relative;z-index:2;border-top:1px solid var(--line);padding:90px 0 56px}
 .f-top{display:flex;align-items:center;justify-content:space-between;gap:40px;flex-wrap:wrap}
@@ -514,6 +614,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
   .steps li .node::before{transform:scale(1)}
   .msgs{scroll-behavior:auto}
   .qa .a p{opacity:1;transform:none}
+  .quiz::backdrop{animation:none}
 }
 </style>
 </head>
@@ -534,7 +635,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
     <a href="#processo">Como funciona</a>
     <a href="#duvidas">Dúvidas</a>
   </nav>
-  <a class="btn sm" href="#contato">Quero conversar</a>
+  <a class="btn sm" href="#contato" data-quiz aria-haspopup="dialog">Quero conversar</a>
 </header>
 
 <main id="main" tabindex="-1">
@@ -568,7 +669,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
         <p class="pre" aria-hidden="true">Seu cliente mandou mensagem às 23h. Ele teve resposta na hora.</p>
         <p class="logo-big" aria-hidden="true">LEXORA</p>
         <p class="sub" aria-hidden="true">Sites e automações que trabalham pelo seu negócio, em silêncio.</p>
-        <div class="row"><a class="btn" href="#contato">Quero conversar <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></div>
+        <div class="row"><a class="btn" href="#contato" data-quiz aria-haspopup="dialog">Quero conversar <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></div>
       </div>
 
       <div class="cue" aria-hidden="true">
@@ -651,7 +752,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
       </div>
       <div class="demo-foot rv">
         <p>Isso, no WhatsApp do seu negócio, 24 horas por dia.</p>
-        <a class="btn" href="#contato">Quero conversar <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+        <a class="btn" href="#contato" data-quiz aria-haspopup="dialog">Quero conversar <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
       </div>
     </div>
   </section>
@@ -814,6 +915,23 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
     <p class="f-bot">© 2026 Lexora</p>
   </div>
 </footer>
+
+<!-- QUESTIONÁRIO DE EXEMPLO: abre nos botões "Quero conversar". Enquanto LEXORA_WHATS estiver vazio no script, as respostas só aparecem na tela. -->
+<dialog class="quiz" id="quiz" aria-label="Conte o que você precisa">
+  <form class="qz" novalidate>
+    <div class="qz-top">
+      <span class="qz-count" aria-hidden="true">01</span>
+      <div class="qz-bar" aria-hidden="true"><i></i><b></b></div>
+      <button type="button" class="qz-x" aria-label="Fechar"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9"/></svg></button>
+    </div>
+    <div class="qz-body"></div>
+    <div class="qz-foot">
+      <p class="qz-err" aria-live="polite"></p>
+      <button type="button" class="qz-back"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13 8H3M7 4L3 8l4 4"/></svg>Voltar</button>
+      <button type="submit" class="btn qz-next">Continuar</button>
+    </div>
+  </form>
+</dialog>
 
 <script>
 (() => {
@@ -1246,6 +1364,298 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
     sent.classList.add('on');
     sent.focus({ preventScroll: true });
   });
+
+  // ===== questionário do "Quero conversar" =====
+  {
+    // QUESTIONÁRIO DE EXEMPLO: enquanto LEXORA_WHATS estiver vazio, as respostas só aparecem na tela.
+    // Para receber no WhatsApp, coloque o número só com dígitos, com 55 e DDD (ex.: 5561999998888).
+    const LEXORA_WHATS = '';
+
+    const sv = p => `<svg viewBox="0 0 28 28" aria-hidden="true">${p}</svg>`;
+    const IC = {
+      site: sv('<rect x="3" y="5" width="22" height="18" rx="2.5"/><path d="M3 10h22M7 14h8M7 18h12"/>'),
+      landing: sv('<rect x="7" y="3" width="14" height="22" rx="2"/><path d="M10 8h8M10 11.5h5"/><rect x="10" y="16" width="8" height="4" rx="2"/>'),
+      loja: sv('<path d="M6 10h16l-1.2 13.2a1.6 1.6 0 0 1-1.6 1.5H8.8a1.6 1.6 0 0 1-1.6-1.5z"/><path d="M10.5 10V8.5a3.5 3.5 0 0 1 7 0V10"/>'),
+      ads: sv('<circle cx="12" cy="12" r="7"/><path d="M17.2 17.2L24 24M9.5 14v-2M12 14V9.5M14.5 14v-3"/>'),
+      auto: sv('<path d="M21.5 11A8 8 0 0 0 7 9.2M6.5 5v4.5H11M6.5 17A8 8 0 0 0 21 18.8M21.5 23v-4.5H17"/>'),
+      nsei: sv('<circle cx="14" cy="14" r="10"/><path d="M11.2 11.2a2.9 2.9 0 1 1 4.1 2.6c-.8.4-1.3 1-1.3 1.9v.6M14 20h.01"/>'),
+      scrub: sv('<rect x="3" y="5" width="22" height="13" rx="2"/><path d="M12 9.2v4.6l4-2.3z"/><path d="M3 23h22"/><circle class="f" cx="11" cy="23" r="1.7"/>'),
+      soft: sv('<circle class="f" cx="7" cy="14" r="2" opacity=".3"/><circle class="f" cx="14" cy="14" r="2" opacity=".6"/><circle class="f" cx="21" cy="14" r="2"/>'),
+      flat: sv('<rect x="4" y="7" width="20" height="14" rx="2"/><path d="M8 12h12M8 16h7"/>'),
+      mark: sv('<circle class="f" cx="14" cy="14" r="2.6"/><circle cx="14" cy="14" r="6.8"/><circle cx="14" cy="14" r="11.2" opacity=".45"/>'),
+      cube: '<span class="cube"><i></i><i></i><i></i><i></i><i></i><i></i></span>'
+    };
+    const MAIS = 'Marque quantos quiser.';
+    // s: rótulo curto do resumo · q: pergunta · multi: várias respostas · pills: opções compactas
+    const Q = {
+      tipo: { s: 'O que quer criar', q: 'O que você quer criar?', help: 'Escolha o mais próximo. Dá para mudar depois.', opts: [
+        { v: 'site', t: 'Site', d: 'Para apresentar o seu negócio e o que você faz.', ic: 'site' },
+        { v: 'landing', t: 'Landing page', d: 'Uma página só, feita para vender uma coisa.', ic: 'landing' },
+        { v: 'loja', t: 'Loja virtual', d: 'E-commerce para vender seus produtos pela internet.', ic: 'loja' },
+        { v: 'ads', t: 'Anúncios no Google', d: 'Google Ads na pesquisa, para aparecer quando procuram o que você vende.', ic: 'ads' },
+        { v: 'auto', t: 'Automação', d: 'Atendimento e tarefas repetidas rodando sozinhos.', ic: 'auto' },
+        { v: 'nsei', t: 'Ainda não sei', d: 'Conte o que precisa e a gente indica o caminho.', ic: 'nsei' }
+      ] },
+      paginas: { s: 'Páginas', q: 'Quantas páginas você imagina?', help: 'Início, sobre, serviços e contato já são quatro.', opts: [
+        'Até 3', 'De 4 a 8', 'Mais de 8', { t: 'Não sei ainda', d: 'A gente monta o mapa do site com você.' }
+      ] },
+      objetivo: { s: 'Objetivo', q: 'Qual é o objetivo da página?', opts: [
+        'Vender um produto ou serviço', 'Juntar contatos de clientes', 'Divulgar um evento ou lançamento', 'Levar a pessoa para o WhatsApp'
+      ] },
+      visual: { s: 'Visual', q: 'Qual visual combina com você?', help: 'Pense no que o cliente deve sentir ao entrar.', cols: 3, opts: [
+        { t: 'Escuro e elegante', sw: ['#0E1116', '#1F2B35', '#C9A86A', '#EDE6DA'] },
+        { t: 'Claro e limpo', sw: ['#FFFFFF', '#EEF1F4', '#1F2933', '#3B82F6'] },
+        { t: 'Colorido e vibrante', sw: ['#FF5A5F', '#FFB400', '#00A699', '#5B4BFF'] },
+        { t: 'Sóbrio e profissional', sw: ['#0B2545', '#13315C', '#8DA9C4', '#EEF4ED'] },
+        { t: 'Natural e acolhedor', sw: ['#F3EDE2', '#C69C72', '#6B8F71', '#3E3A36'] },
+        { t: 'Vocês sugerem', ic: 'mark' }
+      ] },
+      letra: { s: 'Letras', q: 'Que tipo de letra combina com a sua marca?', help: 'É o jeito que os títulos vão aparecer no site.', cols: 3, opts: [
+        { t: 'Moderna', d: 'Reta e leve. Passa clareza.', font: "'Sora',system-ui,sans-serif" },
+        { t: 'Clássica', d: 'Com serifa. Passa tradição.', font: "'Fraunces',Georgia,serif" },
+        { t: 'Marcante', d: 'Grossa e forte. Chama atenção.', font: "'Archivo Black','Arial Black',sans-serif" },
+        { t: 'Escrita à mão', d: 'Próxima, como um bilhete.', font: "'Caveat','Segoe Script',cursive" },
+        { t: 'Vocês sugerem', d: 'A gente escolhe junto com o visual.', ic: 'mark' }
+      ] },
+      efeitos: { s: 'Efeitos', q: 'Quer efeitos em 3D ou animações?', opts: [
+        { t: 'Sim, com 3D', d: 'Objetos e cenas em 3D que se mexem na tela.', ic: 'cube' },
+        { t: 'Vídeo que segue a rolagem', d: 'Como a abertura deste site.', ic: 'scrub' },
+        { t: 'Só animações leves', d: 'Textos e imagens que aparecem com suavidade.', ic: 'soft' },
+        { t: 'Sem efeitos', d: 'Visual simples e direto ao ponto.', ic: 'flat' },
+        { t: 'Vocês decidem', d: 'A gente sugere o que combina com o seu negócio.', ic: 'mark' }
+      ] },
+      detalhes: { s: 'Não pode faltar', q: 'O que não pode faltar?', help: MAIS, multi: true, pills: true, opts: [
+        'Botão de WhatsApp', 'Formulário de contato', 'Agendamento online', 'Galeria de fotos', 'Depoimentos de clientes',
+        'Blog ou notícias', 'Mapa e endereço', 'Área do cliente com login', 'Mais de um idioma', 'Integração com Instagram'
+      ] },
+      material: { s: 'Logo e textos', q: 'Você já tem logo e textos?', opts: [
+        'Tenho logo e textos', 'Tenho só o logo', { t: 'Ainda não tenho nada', d: 'A gente pode criar com você.' }
+      ] },
+      produto: { s: 'O que vende', q: 'O que você vai vender?', opts: [
+        'Roupas e acessórios', 'Comida e bebida', 'Beleza e cuidados', 'Casa e decoração', 'Cursos e produtos digitais', 'Outra coisa'
+      ] },
+      qtd: { s: 'Produtos', q: 'Quantos produtos, mais ou menos?', opts: ['Até 20', 'De 20 a 100', 'De 100 a 500', 'Mais de 500'] },
+      canal: { s: 'Vende hoje', q: 'Você já vende pela internet?', opts: [
+        'Ainda não', 'Pelo Instagram ou WhatsApp', 'Em marketplace, como Mercado Livre e Shopee', 'Já tenho loja e quero trocar'
+      ] },
+      pagamento: { s: 'Pagamentos', q: 'Como quer receber os pagamentos?', help: MAIS, multi: true, pills: true, opts: ['Pix', 'Cartão de crédito', 'Boleto', 'Ainda não sei'] },
+      recursos: { s: 'Recursos da loja', q: 'O que mais a loja precisa ter?', help: MAIS, multi: true, pills: true, opts: [
+        'Cálculo de frete', 'Cupons de desconto', 'Controle de estoque', 'Retirada na loja', 'Aviso de pedido no WhatsApp', 'Nota fiscal automática'
+      ] },
+      anuncia: { s: 'Já anuncia', q: 'Você já anuncia no Google?', opts: [
+        'Nunca anunciei', 'Já anunciei e parei', { t: 'Anuncio e quero melhorar', d: 'A gente revisa o que você já tem.' }
+      ] },
+      destino: { s: 'Anúncio leva para', q: 'Para onde o anúncio vai levar a pessoa?', opts: [
+        'Para o meu site', 'Para o meu WhatsApp', 'Para a minha loja virtual', { t: 'Ainda não tenho site', d: 'Dá para criar junto com a campanha.' }
+      ] },
+      regiao: { s: 'Clientes em', q: 'Onde estão os seus clientes?', opts: ['Na minha cidade', 'No meu estado', 'No Brasil todo', 'Também fora do Brasil'] },
+      verba: { s: 'Verba por mês', q: 'Quanto pensa investir por mês nos anúncios?', help: 'Esse valor vai para o Google. O nosso trabalho é cobrado à parte.', opts: [
+        'Até R$ 500', 'De R$ 500 a R$ 1.500', 'De R$ 1.500 a R$ 5.000', 'Mais de R$ 5.000', 'Ainda não sei'
+      ] },
+      meta: { s: 'Quer mais', q: 'O que você mais quer com os anúncios?', opts: [
+        'Mais mensagens e ligações', 'Mais vendas na loja', 'Mais clientes no endereço físico', 'Mais gente conhecendo a marca'
+      ] },
+      automatizar: { s: 'Automatizar', q: 'O que você quer que rode sozinho?', help: MAIS, multi: true, pills: true, opts: [
+        'Atendimento no WhatsApp', 'Agendamento de horários', 'Envio de orçamentos', 'Cobranças e lembretes', 'Respostas no Instagram', 'Planilhas e relatórios'
+      ] },
+      volume: { s: 'Mensagens por dia', q: 'Quantas mensagens chegam por dia?', opts: ['Menos de 20', 'De 20 a 100', 'Mais de 100', 'Não sei dizer'] },
+      ferramentas: { s: 'Ferramentas', q: 'Quais ferramentas você já usa?', help: MAIS, multi: true, pills: true, opts: [
+        'WhatsApp Business', 'Instagram', 'Planilhas do Google', 'Sistema de agenda', 'Sistema de vendas ou estoque', 'Nenhuma ainda'
+      ] },
+      prazo: { s: 'Prazo', q: 'Para quando você precisa?', opts: ['O quanto antes', 'Em até 1 mês', 'Em 2 ou 3 meses', 'Sem pressa'] }
+    };
+    Object.entries(Q).forEach(([id, q]) => { q.id = id; q.opts = q.opts.map(o => typeof o === 'string' ? { v: o, t: o } : { v: o.v || o.t, ...o }); });
+    // a primeira resposta decide o caminho
+    const PATHS = {
+      site: ['tipo', 'paginas', 'visual', 'letra', 'efeitos', 'detalhes', 'material', 'prazo', 'contato'],
+      landing: ['tipo', 'objetivo', 'visual', 'letra', 'efeitos', 'detalhes', 'material', 'prazo', 'contato'],
+      loja: ['tipo', 'produto', 'qtd', 'canal', 'pagamento', 'recursos', 'visual', 'prazo', 'contato'],
+      ads: ['tipo', 'anuncia', 'destino', 'regiao', 'verba', 'meta', 'prazo', 'contato'],
+      auto: ['tipo', 'automatizar', 'volume', 'ferramentas', 'prazo', 'contato'],
+      nsei: ['tipo', 'contato']
+    };
+    const ARROW = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>';
+    const pad = n => String(n).padStart(2, '0');
+
+    const dlg = $('#quiz'), qzForm = $('.qz', dlg), qzBody = $('.qz-body', dlg), qzCount = $('.qz-count', dlg),
+      qzBar = $('.qz-bar', dlg), qzBack = $('.qz-back', dlg), qzNext = $('.qz-next', dlg), qzErr = $('.qz-err', dlg);
+    let ans = {}, contact = { nome: '', whats: '', negocio: '', extra: '' };
+    let path = PATHS.site, idx = 0, done = false, opener = null, advT = 0, lastPtr = 0, fontsIn = false, downOnBackdrop = false;
+
+    function optHTML(q, o, i) {
+      const on = q.multi ? (ans[q.id] || []).includes(o.v) : ans[q.id] === o.v;
+      const input = `<input type="${q.multi ? 'checkbox' : 'radio'}" name="qz-${q.id}" value="${o.v}"${on ? ' checked' : ''}>`;
+      if (q.pills) return `<label class="qz-pill" style="--i:${i}">${input}<span>${o.t}</span></label>`;
+      let pre = '';
+      if (o.sw) pre = `<span class="qz-sw" aria-hidden="true">${o.sw.map(c => `<i style="background:${c}"></i>`).join('')}</span>`;
+      else if (o.font) pre = `<span class="qz-aa" style="font-family:${o.font}" aria-hidden="true">Aa</span>`;
+      else if (o.ic) pre = `<span class="qz-ic" aria-hidden="true">${IC[o.ic]}</span>`;
+      return `<label class="qz-card${o.ic ? ' has-ic' : ''}" style="--i:${i}">${input}<span class="in">${pre}<span class="tx"><b>${o.t}</b>${o.d ? `<small>${o.d}</small>` : ''}</span></span></label>`;
+    }
+    function headHTML(q, help) {
+      const where = ans.tipo ? `Pergunta ${idx + 1} de ${path.length}. ` : '';
+      return `<h2 class="qz-q" id="qz-q" tabindex="-1"><span class="sr">${where}</span>${q}</h2>${help ? `<p class="qz-help">${help}</p>` : ''}`;
+    }
+    function stepHTML(q) {
+      const box = q.pills ? 'qz-pills' : 'qz-opts' + (q.cols === 3 ? ' c3' : '');
+      return `<fieldset class="qz-step" aria-labelledby="qz-q">${headHTML(q.q, q.help)}<div class="${box}">${q.opts.map((o, i) => optHTML(q, o, i)).join('')}</div></fieldset>`;
+    }
+    function contactHTML() {
+      const nsei = ans.tipo === 'nsei';
+      return `<fieldset class="qz-step" aria-labelledby="qz-q">${headHTML('Para onde a gente manda a resposta?', 'A gente responde em até 24 horas, pelo WhatsApp.')}
+        <div class="qz-fields">
+          <div class="field"><label for="qz-nome">Nome</label><input id="qz-nome" autocomplete="name" placeholder="Seu nome"></div>
+          <div class="field"><label for="qz-whats">WhatsApp</label><input id="qz-whats" type="tel" inputmode="tel" autocomplete="tel" placeholder="(00) 00000-0000"></div>
+          <div class="field"><label for="qz-neg">Seu negócio</label><input id="qz-neg" autocomplete="organization" placeholder="Nome e ramo, ex.: Estúdio Brisa, pilates"></div>
+          <div class="field"><label for="qz-extra">${nsei ? 'O que você precisa' : 'Algo mais?'}</label><textarea id="qz-extra" rows="3" placeholder="${nsei ? 'Conte com as suas palavras' : 'Opcional'}"></textarea></div>
+        </div></fieldset>`;
+    }
+    const field = id => $('#' + id, qzBody);
+    function readContact() {
+      if (!field('qz-nome')) return;
+      contact = { nome: field('qz-nome').value.trim(), whats: field('qz-whats').value.trim(), negocio: field('qz-neg').value.trim(), extra: field('qz-extra').value.trim() };
+    }
+    function updateTop() {
+      qzCount.textContent = done ? 'Pronto' : pad(idx + 1) + (ans.tipo ? ' / ' + pad(path.length) : '');
+      qzBar.style.setProperty('--qp', done ? 1 : ans.tipo ? Math.max(.03, idx / path.length) : .03);
+    }
+    function syncNext() {
+      const id = path[idx];
+      let label = 'Continuar';
+      if (id === 'contato') label = 'Enviar respostas';
+      else if (Q[id].multi && !(ans[id] || []).length) label = 'Pular';
+      qzNext.innerHTML = label + ' ' + ARROW;
+    }
+    function render(dir) {
+      clearTimeout(advT);
+      done = false;
+      const id = path[idx];
+      qzBody.innerHTML = id === 'contato' ? contactHTML() : stepHTML(Q[id]);
+      if (id === 'contato') {
+        field('qz-nome').value = contact.nome; field('qz-whats').value = contact.whats;
+        field('qz-neg').value = contact.negocio; field('qz-extra').value = contact.extra;
+      }
+      qzBody.className = 'qz-body' + (dir ? ' go-' + dir : '');
+      qzBody.scrollTop = 0;
+      qzForm.classList.remove('is-done');
+      qzBack.classList.toggle('off', idx === 0);
+      qzErr.textContent = '';
+      updateTop();
+      syncNext();
+      $('#qz-q', qzBody).focus({ preventScroll: true });
+    }
+    function record(input) {
+      const id = input.name.slice(3), q = Q[id];
+      if (!q) return;
+      ans[id] = q.multi ? $$(`input[name="qz-${id}"]:checked`, qzBody).map(i => i.value) : input.value;
+      if (id === 'tipo') path = PATHS[input.value] || PATHS.site;
+      qzErr.textContent = '';
+      updateTop();
+      syncNext();
+    }
+    function rows() {
+      const out = [['Nome', contact.nome], ['WhatsApp', contact.whats]];
+      if (contact.negocio) out.push(['Negócio', contact.negocio]);
+      path.forEach(id => {
+        const q = Q[id];
+        if (!q) return;
+        const vals = (q.multi ? ans[id] || [] : ans[id] ? [ans[id]] : []).map(v => q.opts.find(o => o.v === v).t);
+        if (vals.length) out.push([q.s, vals.join(', ')]);
+      });
+      if (contact.extra) out.push(['Mais detalhes', contact.extra]);
+      return out;
+    }
+    function showDone(list) {
+      done = true;
+      qzForm.classList.add('is-done');
+      qzBody.className = 'qz-body go-up';
+      qzBody.innerHTML = `<div class="qz-done"><span class="qz-ic" aria-hidden="true">${IC.mark}</span><h2 class="qz-q" id="qz-q" tabindex="-1">Recebemos suas respostas.</h2><p class="qz-help">A gente responde em até 24 horas no seu WhatsApp, com uma primeira ideia do projeto.</p><dl class="qz-sum"></dl><button type="button" class="btn qz-close">Fechar</button></div>`;
+      const dl = $('.qz-sum', qzBody);
+      list.forEach(([k, v]) => {
+        const dt = document.createElement('dt'), dd = document.createElement('dd');
+        dt.textContent = k; dd.textContent = v;
+        dl.append(dt, dd);
+      });
+      updateTop();
+      $('#qz-q', qzBody).focus({ preventScroll: true });
+    }
+    function send() {
+      readContact();
+      const wz = contact.whats.replace(/\D/g, '');
+      if (!contact.nome) { qzErr.textContent = 'Falta o seu nome.'; field('qz-nome').focus(); return; }
+      if (wz.length < 10) { qzErr.textContent = 'Confira o WhatsApp, com DDD.'; field('qz-whats').focus(); return; }
+      if (ans.tipo === 'nsei' && !contact.extra) { qzErr.textContent = 'Conte um pouco do que você precisa.'; field('qz-extra').focus(); return; }
+      const list = rows();
+      if (LEXORA_WHATS) {
+        const text = 'Olá, Lexora! Respondi o questionário do site.\n\n' + list.map(([k, v]) => k + ': ' + v).join('\n');
+        window.open('https://wa.me/' + LEXORA_WHATS + '?text=' + encodeURIComponent(text), '_blank', 'noopener');
+      }
+      showDone(list);
+    }
+    function goNext() {
+      clearTimeout(advT);
+      const id = path[idx];
+      if (id === 'contato') { send(); return; }
+      if (!Q[id].multi && !ans[id]) { qzErr.textContent = 'Escolha uma opção para continuar.'; return; }
+      idx++;
+      render('fwd');
+    }
+    function goBack() {
+      if (idx === 0) return;
+      readContact();
+      idx--;
+      render('back');
+    }
+    function loadFonts() {
+      if (fontsIn) return;
+      fontsIn = true;
+      const l = document.createElement('link');
+      l.rel = 'stylesheet';
+      l.href = 'https://fonts.googleapis.com/css2?family=Archivo+Black&family=Caveat:wght@600&family=Fraunces:wght@400&text=Aa&display=swap';
+      document.head.appendChild(l);
+    }
+    function openQuiz(from) {
+      opener = from;
+      if (done) { ans = {}; contact = { nome: '', whats: '', negocio: '', extra: '' }; path = PATHS.site; idx = 0; }
+      loadFonts();
+      document.documentElement.classList.add('qz-lock');
+      dlg.classList.remove('closing');
+      dlg.showModal();
+      render('fwd');
+    }
+    function closeQuiz() {
+      if (!dlg.open || dlg.classList.contains('closing')) return;
+      clearTimeout(advT);
+      if (!done) readContact();
+      dlg.classList.add('closing');
+      setTimeout(() => { dlg.classList.remove('closing'); dlg.close(); }, RMQ.matches ? 0 : 200);
+    }
+
+    if (typeof dlg.showModal === 'function') {
+      $$('[data-quiz]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); openQuiz(a); }));
+    }
+    dlg.addEventListener('close', () => {
+      document.documentElement.classList.remove('qz-lock');
+      if (opener) opener.focus({ preventScroll: true });
+    });
+    dlg.addEventListener('cancel', e => { e.preventDefault(); closeQuiz(); });
+    dlg.addEventListener('pointerdown', e => { downOnBackdrop = e.target === dlg; });
+    dlg.addEventListener('click', e => { if (e.target === dlg && downOnBackdrop) closeQuiz(); });
+    $('.qz-x', dlg).addEventListener('click', closeQuiz);
+    qzBack.addEventListener('click', goBack);
+    qzForm.addEventListener('submit', e => { e.preventDefault(); goNext(); });
+    qzBody.addEventListener('change', e => { if (e.target.name) record(e.target); });
+    qzBody.addEventListener('pointerdown', () => { lastPtr = performance.now(); });
+    qzBody.addEventListener('click', e => {
+      const t = e.target;
+      if (t.closest('.qz-close')) { closeQuiz(); return; }
+      // toque ou clique numa opção única já avança; no teclado a pessoa confirma com Enter
+      if (t.type !== 'radio' || performance.now() - lastPtr > 900) return;
+      record(t);
+      clearTimeout(advT);
+      advT = setTimeout(goNext, RMQ.matches ? 0 : 380);
+    });
+  }
 
   // ===== entrada da página e arranque =====
   let started = false;
